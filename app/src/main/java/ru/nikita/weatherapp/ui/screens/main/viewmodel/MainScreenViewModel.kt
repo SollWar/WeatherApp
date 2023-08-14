@@ -13,16 +13,20 @@ import kotlinx.coroutines.launch
 import ru.nikita.weatherapp.ui.base.EventHandler
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreeViewState
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreenEvent
+import ru.z3rg.domain.models.ForecastWeather
+import ru.z3rg.domain.usecases.GetForecastForCityNameUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor() : ViewModel(), EventHandler<MainScreenEvent> {
+class MainScreenViewModel @Inject constructor(
+    private val getForecastForCityNameUseCase: GetForecastForCityNameUseCase
+) : ViewModel(), EventHandler<MainScreenEvent> {
 
     private val _mainScreenViewState: MutableStateFlow<MainScreeViewState> =
         MutableStateFlow(MainScreeViewState.Loading)
     val mainScreenViewState = _mainScreenViewState.asStateFlow()
 
-    private val _data: MutableStateFlow<String> = MutableStateFlow("")
+    private val _data: MutableStateFlow<ForecastWeather> = MutableStateFlow(ForecastWeather())
 
     private var successLoadData = false
 
@@ -69,7 +73,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel(), EventHandler<Main
         viewModelScope.launch {
             val loadingResponse = viewModelScope.async(Dispatchers.IO) {
                 delay(1500)
-                return@async "Балашиха"
+                return@async getForecastForCityNameUseCase.invoke("Балашиха")
             }
 
             _data.value = loadingResponse.await()
@@ -83,6 +87,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel(), EventHandler<Main
     }
 
     private fun showData() {
-        _mainScreenViewState.value = MainScreeViewState.Display(_data.value)
+        _mainScreenViewState.value = MainScreeViewState.Display(_data.value.cityName)
+        Log.d("Response", _data.value.toString())
     }
 }

@@ -28,12 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import ru.nikita.weatherapp.R
-import ru.nikita.weatherapp.ui.screens.main.viewmodel.MainScreenViewModel
 import ru.nikita.weatherapp.ui.theme.DarkBackground
 import ru.nikita.weatherapp.ui.theme.DarkForeground
 import ru.nikita.weatherapp.ui.theme.White
