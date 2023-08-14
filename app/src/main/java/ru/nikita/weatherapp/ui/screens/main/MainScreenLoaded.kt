@@ -1,16 +1,7 @@
 package ru.nikita.weatherapp.ui.screens.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,8 +10,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,34 +17,89 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
+import coil.compose.rememberAsyncImagePainter
 import ru.nikita.weatherapp.R
-import ru.nikita.weatherapp.ui.theme.DarkBackground
-import ru.nikita.weatherapp.ui.theme.DarkForeground
-import ru.nikita.weatherapp.ui.theme.White
-import ru.nikita.weatherapp.ui.theme.juraFont12spGray
-import ru.nikita.weatherapp.ui.theme.juraFont16sp
-import ru.nikita.weatherapp.ui.theme.juraFont16spGray
-import ru.nikita.weatherapp.ui.theme.juraFont20spGray
-import ru.nikita.weatherapp.ui.theme.juraFont24sp
-import ru.nikita.weatherapp.ui.theme.juraFont64sp
+import ru.nikita.weatherapp.ui.theme.*
+import ru.z3rg.domain.models.ForecastWeather
+import ru.z3rg.domain.models.ForecastWeatherDay
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Preview(device = "spec:width=360dp,height=800dp,dpi=440", showSystemUi = true)
 @Composable
-fun MainScreenLoadedPreview(){
-    MainScreenLoaded(cityName = "Балашиха", false)
+fun MainScreenLoadedPreview() {
+
+    MainScreenLoaded(
+        ForecastWeather(
+            cityName = "Балашиха",
+            forecastDay = arrayListOf(
+                ForecastWeatherDay(
+                    conditionText = "Ветрянка",
+                    conditionIcon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                    avgTempC = 10.0,
+                    minTempC = 10.0,
+                    maxTempC = 20.0,
+                    maxWindKph = 10.0,
+                    avgHumidity = 10.0,
+                    chanceRain = 90.0,
+                    date = "2023-08-14"
+                ),
+                ForecastWeatherDay(
+                    conditionText = "Ветрянка",
+                    conditionIcon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                    avgTempC = 10.0,
+                    minTempC = 10.0,
+                    maxTempC = 20.0,
+                    maxWindKph = 10.0,
+                    avgHumidity = 10.0,
+                    chanceRain = 90.0,
+                    date = "2023-08-15"
+                ),
+                ForecastWeatherDay(
+                    conditionText = "Ветрянка",
+                    conditionIcon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                    avgTempC = 10.0,
+                    minTempC = 10.0,
+                    maxTempC = 20.0,
+                    maxWindKph = 10.0,
+                    avgHumidity = 10.0,
+                    chanceRain = 90.0,
+                    date = "2023-08-16"
+                ),
+                ForecastWeatherDay(
+                    conditionText = "Ветрянка",
+                    conditionIcon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                    avgTempC = 10.0,
+                    minTempC = 10.0,
+                    maxTempC = 20.0,
+                    maxWindKph = 10.0,
+                    avgHumidity = 10.0,
+                    chanceRain = 90.0,
+                    date = "2023-08-17"
+                ),
+                ForecastWeatherDay(
+                    conditionText = "Ветрянка",
+                    conditionIcon = "//cdn.weatherapi.com/weather/64x64/day/113.png",
+                    avgTempC = 10.0,
+                    minTempC = 10.0,
+                    maxTempC = 20.0,
+                    maxWindKph = 10.0,
+                    avgHumidity = 10.0,
+                    chanceRain = 90.0,
+                    date = "2023-08-18"
+                )
+            )
+        ), currentDate = "14 августа, понедельник"
+    )
 }
 
 
 @Composable
 fun MainScreenLoaded(
-    cityName: String = "",
-    loading: Boolean
+    forecast: ForecastWeather,
+    currentDate: String
 ) {
 
-    val isLoading = remember{ mutableStateOf(loading) }
 
     Column(
         modifier = Modifier
@@ -76,12 +120,12 @@ fun MainScreenLoaded(
             ) {
                 Column {
                     Text(
-                        text = cityName,
+                        text = forecast.cityName,
                         style = juraFont24sp()
                     )
                     Text(
                         modifier = Modifier,
-                        text = "13 Августа, Воскресенье",
+                        text = currentDate,
                         style = juraFont20spGray()
                     )
                 }
@@ -107,13 +151,7 @@ fun MainScreenLoaded(
                 .fillMaxWidth()
         ) {
             Column {
-                Column(
-                    modifier = Modifier
-                        .placeholder(
-                            visible = isLoading.value,
-                            highlight = PlaceholderHighlight.shimmer()
-                        )
-                ) {
+                Column {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -121,16 +159,18 @@ fun MainScreenLoaded(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "18°",
+                            text =
+                            forecast.forecastDay[0].maxTempC.toInt().toString() + "°",
                             style = juraFont64sp()
                         )
                         Icon(
-                            painterResource(R.drawable.weather_ico_placeholder),
+                            rememberAsyncImagePainter(
+                                model = "https:" + forecast.forecastDay[0].conditionIcon
+                            ),
                             "Погода",
                             Modifier
                                 .width(64.dp)
-                                .height(64.dp),
-                            tint = White
+                                .height(64.dp)
                         )
                     }
                     Text(
@@ -149,36 +189,32 @@ fun MainScreenLoaded(
                     ) {
                         WeatherIndicators(
                             "Ветер",
-                            "10 м/с",
+                            forecast.forecastDay[0].maxWindKph.toInt().toString() + " км/ч",
                             R.drawable.wind
                         )
                         WeatherIndicators(
                             "Влажность",
-                            "98 %",
+                            forecast.forecastDay[0].avgHumidity.toInt().toString() + " %",
                             R.drawable.humidity
                         )
                         WeatherIndicators(
                             "Дождь",
-                            "100 %",
+                            forecast.forecastDay[0].chanceRain.toInt().toString() + " %",
                             R.drawable.rain
                         )
                     }
                 }
                 WeatherDay(
-                    "14 августа, понедельник",
-                    isLoading.value
+                    forecast.forecastDay[1]
                 )
                 WeatherDay(
-                    "15 августа, вторник",
-                    isLoading.value
+                    forecast.forecastDay[2]
                 )
                 WeatherDay(
-                    "16 августа, среда",
-                    isLoading.value
+                    forecast.forecastDay[3]
                 )
                 WeatherDay(
-                    "17 августа, четверг",
-                    isLoading.value
+                    forecast.forecastDay[4]
                 )
             }
         }
@@ -219,8 +255,7 @@ fun WeatherIndicators(
 
 @Composable
 fun WeatherDay(
-    day: String,
-    isLoading: Boolean
+    forecastDay: ForecastWeatherDay
 ) {
 
     @Composable
@@ -244,21 +279,21 @@ fun WeatherDay(
         }
     }
 
+    val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(forecastDay.date)
+    val formatter = SimpleDateFormat("dd MMMM, EEEE", Locale.getDefault())
+
+
     Box(
         modifier = Modifier
             .padding(top = 16.dp)
             .fillMaxWidth()
-            .placeholder(
-                visible = isLoading,
-                highlight = PlaceholderHighlight.shimmer()
-            )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             Text(
-                text = day,
+                text = formatter.format(date!!),
                 style = juraFont16sp()
             )
             Row(
@@ -272,19 +307,26 @@ fun WeatherDay(
                 ) {
                     Indicator(
                         "Температура",
-                        "13° - 22°"
+                        forecastDay.minTempC.toInt().toString() + "°" + " - "
+                                + forecastDay.maxTempC.toInt().toString() + "°"
                     )
                     Indicator(
                         "Ветер",
-                        "10 м/с"
+                        (forecastDay.maxWindKph / 3.6).toInt().toString() + " м/с"
                     )
                     Indicator(
                         "Влажность",
-                        "98 %"
+                        forecastDay.avgHumidity.toInt().toString() + " %"
+                    )
+                    Indicator(
+                        "Дождь",
+                        forecastDay.chanceRain.toInt().toString() + " %"
                     )
                 }
                 Icon(
-                    painterResource(R.drawable.weather_ico_placeholder),
+                    rememberAsyncImagePainter(
+                        model = "https:" + forecastDay.conditionIcon
+                    ),
                     "Погода",
                     Modifier
                         .width(48.dp)
@@ -296,7 +338,7 @@ fun WeatherDay(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = "Переменная облачность",
+                text = forecastDay.conditionText,
                 style = juraFont16spGray(TextAlign.End)
             )
         }

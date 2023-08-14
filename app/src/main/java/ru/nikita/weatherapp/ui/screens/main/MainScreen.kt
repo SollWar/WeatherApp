@@ -17,12 +17,13 @@ fun MainScreen(
     val viewState = viewModel.mainScreenViewState.collectAsState()
 
     when (val state = viewState.value) {
-        MainScreeViewState.Loading -> MainScreenLoaded(loading = true)
-        MainScreeViewState.Error -> MainScreenError {
+        is MainScreeViewState.Start -> MainScreenLoading()
+        is MainScreeViewState.Loading -> MainScreenLoading(state.cityName, viewModel.currentDate)
+        is MainScreeViewState.Error -> MainScreenError {
             viewModel.obtainEvent(MainScreenEvent.ReloadedData)
         }
 
-        is MainScreeViewState.Display -> MainScreenLoaded(state.cityName, false)
+        is MainScreeViewState.Display -> MainScreenLoaded(state.forecast, viewModel.currentDate)
     }
 
     Log.d("ViewState", viewState.value.toString())

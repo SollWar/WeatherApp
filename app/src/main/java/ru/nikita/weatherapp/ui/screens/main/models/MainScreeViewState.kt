@@ -1,9 +1,14 @@
 package ru.nikita.weatherapp.ui.screens.main.models
 
+import ru.z3rg.domain.models.ForecastWeather
+
 sealed class MainScreeViewState {
-    object Loading: MainScreeViewState()
-    object Error: MainScreeViewState()
-    data class Display(
+    data class Loading(
         val cityName: String
     ): MainScreeViewState()
+    data class Display(
+        val forecast: ForecastWeather = ForecastWeather()
+    ): MainScreeViewState()
+    object Error: MainScreeViewState()
+    object Start: MainScreeViewState()
 }
