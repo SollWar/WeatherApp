@@ -1,11 +1,8 @@
 package ru.nikita.weatherapp.ui.screens.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,16 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.nikita.weatherapp.ui.theme.DarkBackground
-import ru.nikita.weatherapp.ui.theme.White
-import ru.nikita.weatherapp.ui.theme.juraFont16spGray
-import ru.nikita.weatherapp.ui.theme.juraFont24sp
+import ru.nikita.weatherapp.ui.screens.search.models.SearchScreenEvent
+import ru.nikita.weatherapp.ui.screens.search.models.SearchScreenState
+import ru.nikita.weatherapp.ui.theme.*
+import ru.z3rg.domain.models.CityEntity
 
 @Preview
 @Composable
-fun SearchScreen() {
+fun SearchScreenPreview() {
+    SearchScreen(
+        SearchScreenState()
+    )
+}
 
-    val city = listOf("Балашиха", "Квашиха", "Увашиха")
+
+@Composable
+fun SearchScreen(
+    state: SearchScreenState,
+    onEvent: (SearchScreenEvent) -> Unit = {},
+    onEnterCity: () -> Unit = {}
+) {
 
     Column(
         modifier = Modifier
@@ -42,9 +49,11 @@ fun SearchScreen() {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth(),
-                value = "Балашиха",
+                value = state.textFieldValue,
+                singleLine = true,
                 onValueChange = {
-
+                    onEvent(SearchScreenEvent.UpdateTextField(it))
+                    onEvent(SearchScreenEvent.UpdateCityList)
                 },
                 textStyle = juraFont24sp(),
                 trailingIcon = {
@@ -63,8 +72,12 @@ fun SearchScreen() {
             )
         }
         LazyColumn(content = {
-            items(city) {
-                CityItem(name = it)
+            items(state.cityList.cityList) {
+                CityItem(
+                    it,
+                    onEvent,
+                    onEnterCity
+                )
             }
         })
     }
@@ -72,18 +85,36 @@ fun SearchScreen() {
 
 @Composable
 fun CityItem(
-    name: String
-){
-    Box(
+    cityEntity: CityEntity,
+    onEvent: (SearchScreenEvent) -> Unit = {},
+    onEnterCity: () -> Unit = {}
+) {
+    Row(
         modifier = Modifier
-            .padding(top = 4.dp, start = 32.dp, end = 16.dp)
+            .padding(bottom = 4.dp, start = 32.dp, end = 16.dp)
             .height(60.dp)
-            .fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+            .fillMaxWidth()
+            .clickable {
+                onEvent(SearchScreenEvent.UpdateCityNameDataStore(cityEntity.name))
+                onEnterCity()
+            },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = name,
+            text = cityEntity.name,
             style = juraFont24sp()
         )
+        Column {
+            Text(
+                text = cityEntity.region,
+                style = juraFont16spGray()
+            )
+            Text(
+                text = cityEntity.country,
+                style = juraFont16spGray()
+            )
+        }
     }
+
 }
