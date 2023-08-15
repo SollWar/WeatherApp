@@ -5,7 +5,9 @@ sealed class SearchScreenEvent {
         val textFieldValue: String = ""
     ): SearchScreenEvent()
     data object UpdateCityList: SearchScreenEvent()
-    data class UpdateCityNameDataStore(
-        val cityName: String = ""
+    data class UpdateCityDataStore(
+        val cityName: String = "",
+        val lat: Double = 0.0,
+        val lon: Double = 0.0
     ): SearchScreenEvent()
 }

@@ -5,7 +5,6 @@ import ru.z3rg.domain.models.ForecastWeatherDay
 
 data class MainScreenState(
     var forecast: ForecastWeather = ForecastWeather(
-        cityName = "",
         forecastDay = arrayListOf(
             ForecastWeatherDay(),
             ForecastWeatherDay(),

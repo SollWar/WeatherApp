@@ -50,6 +50,8 @@ fun citySearchItemToCityEntity(citySearchItem: CitySearchItem): CityEntity {
     return CityEntity(
         name = citySearchItem.name,
         region = citySearchItem.region,
-        country = citySearchItem.country
+        country = citySearchItem.country,
+        lat = citySearchItem.lat,
+        lon = citySearchItem.lon
     )
 }

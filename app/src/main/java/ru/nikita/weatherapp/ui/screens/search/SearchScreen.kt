@@ -95,7 +95,11 @@ fun CityItem(
             .height(60.dp)
             .fillMaxWidth()
             .clickable {
-                onEvent(SearchScreenEvent.UpdateCityNameDataStore(cityEntity.name))
+                onEvent(SearchScreenEvent.UpdateCityDataStore(
+                    cityEntity.name,
+                    cityEntity.lat,
+                    cityEntity.lon
+                ))
                 onEnterCity()
             },
         horizontalArrangement = Arrangement.SpaceBetween,
