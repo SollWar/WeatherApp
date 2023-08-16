@@ -45,7 +45,8 @@ fun MainScreenPreview() {
                 ForecastWeatherDay(),
                 ForecastWeatherDay(),
                 ForecastWeatherDay()
-            )
+            ),
+            forecastCurrent = ForecastWeatherDay()
         )
     ))
 }
@@ -125,7 +126,7 @@ fun MainScreen(
                     ) {
                         Text(
                             text =
-                            state.forecast.forecastDay[0].maxTempC.toInt().toString() + "°",
+                            state.forecast.forecastCurrent.avgTempC.toInt().toString() + "°",
                             style = juraFont64sp()
                         )
                         Icon(
@@ -140,7 +141,7 @@ fun MainScreen(
                         )
                     }
                     Text(
-                        text = "Переменная облачность",
+                        text = state.forecast.forecastCurrent.conditionText,
                         style = juraFont20spGray()
                     )
                     Row(
@@ -155,12 +156,12 @@ fun MainScreen(
                     ) {
                         WeatherIndicators(
                             "Ветер",
-                            (state.forecast.forecastDay[0].maxWindKph / 3.6).toInt().toString() + " м/с",
+                            (state.forecast.forecastCurrent.maxWindKph / 3.6).toInt().toString() + " м/с",
                             R.drawable.wind
                         )
                         WeatherIndicators(
                             "Влажность",
-                            state.forecast.forecastDay[0].avgHumidity.toInt().toString() + " %",
+                            state.forecast.forecastCurrent.avgHumidity.toInt().toString() + " %",
                             R.drawable.humidity
                         )
                         WeatherIndicators(

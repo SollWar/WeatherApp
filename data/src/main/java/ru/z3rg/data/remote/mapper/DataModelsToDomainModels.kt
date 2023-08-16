@@ -25,7 +25,16 @@ fun forecastdayToForecastWeatherDay(forecastday: Forecastday): ForecastWeatherDa
 }
 
 fun weatherApiResponseToForecastWeather(weatherApiResponse: WeatherApiResponse): ForecastWeather {
-    val forecastWeather = ForecastWeather(cityName = weatherApiResponse.location.name)
+    val forecastWeather = ForecastWeather(
+        cityName = weatherApiResponse.location.name,
+        forecastCurrent = ForecastWeatherDay(
+            conditionText = weatherApiResponse.current.condition.text,
+            conditionIcon = weatherApiResponse.current.condition.icon,
+            avgTempC = weatherApiResponse.current.temp_c,
+            maxWindKph = weatherApiResponse.current.wind_kph,
+            avgHumidity = weatherApiResponse.current.humidity
+        )
+    )
     repeat(weatherApiResponse.forecast.forecastday.size) {
         forecastWeather.addForecastDay(
             forecastdayToForecastWeatherDay(
