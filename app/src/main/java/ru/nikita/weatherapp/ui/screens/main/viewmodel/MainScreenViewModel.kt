@@ -1,5 +1,6 @@
 package ru.nikita.weatherapp.ui.screens.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,6 +76,7 @@ class MainScreenViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 loading = false
             )
+            Log.d("ForecastCurrent", _state.value.forecast.forecastCurrent.toString())
         }
     }
 

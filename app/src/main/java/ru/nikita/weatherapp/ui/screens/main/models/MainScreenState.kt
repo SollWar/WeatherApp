@@ -11,7 +11,8 @@ data class MainScreenState(
             ForecastWeatherDay(),
             ForecastWeatherDay(),
             ForecastWeatherDay()
-        )
+        ),
+        forecastCurrent = ForecastWeatherDay()
     ),
     var currentDate: String = "",
     var loading: Boolean = false,
