@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getForecastForCityNameFromDataStoreUseCase: GetForecastForCityNameFromDataStoreUseCase,
+    private val getCityNameFromDataStoreUseCase: GetForecastForCityNameFromDataStoreUseCase,
     private val getForecastForCityNameUseCase: GetForecastForCityNameUseCase,
     private val getCordForDataStoreUseCase: GetCordForDataStoreUseCase
 ) : ViewModel() {
@@ -51,7 +51,7 @@ class MainScreenViewModel @Inject constructor(
         )
         viewModelScope.launch {
             val responseCityName = viewModelScope.async(Dispatchers.IO) {
-                return@async getForecastForCityNameFromDataStoreUseCase.invoke()
+                return@async getCityNameFromDataStoreUseCase.invoke()
             }
 
             val responseCityCord = viewModelScope.async(Dispatchers.IO) {

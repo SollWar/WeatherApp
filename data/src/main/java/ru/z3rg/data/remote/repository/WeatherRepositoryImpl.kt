@@ -15,9 +15,9 @@ class WeatherRepositoryImpl @Inject constructor (
     private val weatherApi: WeatherApi
 ): WeatherRepository {
 
-    override suspend fun getForecast(cityName: String): ForecastWeather = withContext(Dispatchers.IO) {
+    override suspend fun getForecast(cityName: String): ForecastWeather {
         val request = weatherApi.getWeather(city = cityName)
-        return@withContext weatherApiResponseToForecastWeather(request.body()!!)
+        return weatherApiResponseToForecastWeather(request.body()!!)
     }
 
     override suspend fun searchCity(cityName: String): CityList = withContext(Dispatchers.IO)  {
