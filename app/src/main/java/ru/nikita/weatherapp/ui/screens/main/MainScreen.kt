@@ -1,5 +1,3 @@
-@file:JvmName("MainScreenKt")
-
 package ru.nikita.weatherapp.ui.screens.main
 
 import androidx.compose.foundation.background
@@ -21,20 +19,36 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import ru.nikita.weatherapp.R
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreenState
 import ru.nikita.weatherapp.ui.theme.*
+import ru.z3rg.domain.models.ForecastWeather
 import ru.z3rg.domain.models.ForecastWeatherDay
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Preview(device = "spec:width=360dp,height=800dp,dpi=440", showSystemUi = true)
+@Preview(device = "spec:width=360dp,height=800dp,dpi=440", showSystemUi = true, backgroundColor = 0xFF1A1C1E,
+    showBackground = true
+)
 @Composable
 fun MainScreenPreview() {
-    MainScreen(state = MainScreenState())
+    MainScreen(state = MainScreenState(
+        currentDate = "11 ноября, понедельник",
+        forecast = ForecastWeather(
+            cityName = "Балашиха",
+            forecastDay = arrayListOf(
+                ForecastWeatherDay(),
+                ForecastWeatherDay(),
+                ForecastWeatherDay(),
+                ForecastWeatherDay(),
+                ForecastWeatherDay()
+            )
+        )
+    ))
 }
-
 
 @Composable
 fun MainScreen(
@@ -45,7 +59,6 @@ fun MainScreen(
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .background(DarkBackground)
     ) {
         Box(
             modifier = Modifier
@@ -95,8 +108,14 @@ fun MainScreen(
         ) {
             Column {
                 Column(
-                    Modifier
-                        .placeholder(state.loading)
+                    modifier = Modifier
+                        .placeholder(
+                            visible =  state.loading,
+                            color = PlaceholderFadeInColor,
+                            highlight = PlaceholderHighlight.fade(
+                                highlightColor = PlaceholderFadeOutColor
+                            )
+                        )
                 ) {
                     Row(
                         modifier = Modifier
@@ -116,7 +135,8 @@ fun MainScreen(
                             "Погода",
                             Modifier
                                 .width(64.dp)
-                                .height(64.dp)
+                                .height(64.dp),
+                            tint = White
                         )
                     }
                     Text(
@@ -150,22 +170,12 @@ fun MainScreen(
                         )
                     }
                 }
-                WeatherDay(
-                    state.forecast.forecastDay[1],
-                    state.loading
-                )
-                WeatherDay(
-                    state.forecast.forecastDay[2],
-                    state.loading
-                )
-                WeatherDay(
-                    state.forecast.forecastDay[3],
-                    state.loading
-                )
-                WeatherDay(
-                    state.forecast.forecastDay[4],
-                    state.loading
-                )
+                for (i in 1..4) {
+                    WeatherDay(
+                        state.forecast.forecastDay[i],
+                        state.loading
+                    )
+                }
             }
         }
         Spacer(
@@ -250,7 +260,13 @@ fun WeatherDay(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .placeholder(loading)
+                    .placeholder(
+                    visible =  loading,
+                    color = PlaceholderFadeInColor,
+                    highlight = PlaceholderHighlight.fade(
+                        highlightColor = PlaceholderFadeOutColor
+                    )
+                )
             ) {
                 Column(
                     Modifier

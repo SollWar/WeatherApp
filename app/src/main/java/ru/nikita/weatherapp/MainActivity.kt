@@ -44,6 +44,8 @@ class MainActivity : ComponentActivity () {
                                 },
                                 state = state.value
                             )
+
+                            // Проверка изменения города при возврате на главный экран
                             if (it.lifecycle.currentState == Lifecycle.State.RESUMED) {
                                 viewModel.onEvent(MainScreenEvent.ReloadForecast)
                             }
