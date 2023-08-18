@@ -9,20 +9,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.nikita.weatherapp.ui.screens.main.MainScreen
-import ru.nikita.weatherapp.ui.screens.main.models.MainScreenEvent
+import ru.nikita.weatherapp.ui.screens.main.MainScreenDisplay
+import ru.nikita.weatherapp.ui.screens.main.MainScreenError
+import ru.nikita.weatherapp.ui.screens.main.MainScreenLoading
+import ru.nikita.weatherapp.ui.screens.main.models.MainScreenState
 import ru.nikita.weatherapp.ui.screens.main.viewmodel.MainScreenViewModel
 import ru.nikita.weatherapp.ui.screens.search.SearchScreen
 import ru.nikita.weatherapp.ui.screens.search.viewmodel.SearchScreenViewModel
 import ru.nikita.weatherapp.ui.theme.WeatherAppTheme
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity () {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -38,16 +39,27 @@ class MainActivity : ComponentActivity () {
 
                             val viewModel = hiltViewModel<MainScreenViewModel>()
                             val state = viewModel.state.collectAsState()
-                            MainScreen(
-                                {
-                                    navController.navigate(route = "search")
-                                },
-                                state = state.value
-                            )
+                            when (state.value) {
+                                is MainScreenState.Loading -> {
+                                    MainScreenLoading(
+                                        onState = viewModel::onState
+                                    )
+                                }
 
-                            // Проверка изменения города при возврате на главный экран
-                            if (it.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                                viewModel.onEvent(MainScreenEvent.ReloadForecast)
+                                is MainScreenState.Error -> {
+                                    MainScreenError(
+                                        onState = viewModel::onState,
+                                        onReloadClick = viewModel::onEvent
+                                    )
+                                }
+
+                                is MainScreenState.Display -> {
+                                    MainScreenDisplay(
+                                        onState = viewModel::onState,
+                                        onSearchClick =  { navController.navigate(route = "search") },
+                                        state = state.value as MainScreenState.Display
+                                    )
+                                }
                             }
                         }
                         composable(route = "search") {
@@ -56,9 +68,7 @@ class MainActivity : ComponentActivity () {
                             SearchScreen(
                                 state = state.value,
                                 onEvent = viewModel::onEvent
-                            ) {
-                                navController.popBackStack()
-                            }
+                            ) { navController.popBackStack() }
                         }
                     }
                 }

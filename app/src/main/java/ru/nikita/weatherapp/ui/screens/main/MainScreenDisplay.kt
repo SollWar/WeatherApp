@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +35,8 @@ import java.util.*
     showBackground = true
 )
 @Composable
-fun MainScreenPreview() {
-    MainScreen(state = MainScreenState(
+fun MainScreenDisplayPreview() {
+    MainScreenDisplay(state = MainScreenState.Display(
         currentDate = "11 ноября, понедельник",
         forecast = ForecastWeather(
             cityName = "Балашиха",
@@ -52,9 +53,10 @@ fun MainScreenPreview() {
 }
 
 @Composable
-fun MainScreen(
+fun MainScreenDisplay(
+    onState: (MainScreenState) -> Unit = {},
     onSearchClick: () -> Unit = {},
-    state: MainScreenState
+    state: MainScreenState.Display
 ) {
 
     Column(
@@ -184,6 +186,10 @@ fun MainScreen(
                 .height(16.dp)
         )
     }
+
+    LaunchedEffect(key1 = "", block = {
+        onState(MainScreenState.Display())
+    })
 }
 
 @Composable
@@ -262,12 +268,12 @@ fun WeatherDay(
                 modifier = Modifier
                     .fillMaxWidth()
                     .placeholder(
-                    visible =  loading,
-                    color = PlaceholderFadeInColor,
-                    highlight = PlaceholderHighlight.fade(
-                        highlightColor = PlaceholderFadeOutColor
+                        visible = loading,
+                        color = PlaceholderFadeInColor,
+                        highlight = PlaceholderHighlight.fade(
+                            highlightColor = PlaceholderFadeOutColor
+                        )
                     )
-                )
             ) {
                 Column(
                     Modifier

@@ -22,13 +22,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
-    @Singleton
-    fun provideWeatherApi(): WeatherApi {
+    private fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.weatherapi.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherApi(): WeatherApi {
+        return provideRetrofit()
             .create(WeatherApi::class.java)
     }
 

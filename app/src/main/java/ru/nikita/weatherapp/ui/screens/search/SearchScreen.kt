@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.nikita.weatherapp.ui.screens.search.models.SearchScreenEvent
@@ -109,15 +111,40 @@ fun SearchScreen(
                 )
             )
         }
-        LazyColumn(content = {
-            items(state.cityList.cityList) {
-                CityItem(
-                    it,
-                    onEvent,
-                    onEnterCity
+
+
+            if (!state.error && !state.loading) {
+                LazyColumn(content = {
+                    items(state.cityList.cityList) {
+                        CityItem(
+                            it,
+                            onEvent,
+                            onEnterCity
+                        )
+                    }
+                })
+            } else if (state.error) {
+                Text(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp, start = 32.dp, end = 32.dp),
+                    text = "Не удалось загрузить результаты поиска",
+                    style = juraFont16spGray(textAlign = TextAlign.Center)
                 )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 64.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(bottom = 8.dp, start = 32.dp, end = 32.dp)
+                    )
+                }
+
             }
-        })
+
     }
 }
 
@@ -132,11 +159,13 @@ fun CityItem(
             .padding(bottom = 8.dp, start = 32.dp, end = 16.dp)
             .fillMaxWidth()
             .clickable {
-                onEvent(SearchScreenEvent.UpdateCityDataStore(
-                    cityEntity.name,
-                    cityEntity.lat,
-                    cityEntity.lon
-                ))
+                onEvent(
+                    SearchScreenEvent.UpdateCityDataStore(
+                        cityEntity.name,
+                        cityEntity.lat,
+                        cityEntity.lon
+                    )
+                )
                 onEnterCity()
             },
         horizontalAlignment = Alignment.Start,
