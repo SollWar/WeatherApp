@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -41,12 +42,18 @@ class MainScreenViewModel @Inject constructor(
                 isCityChange()
             }
             is MainScreenState.Error -> {
-                
             }
             is MainScreenState.Loading -> {
+                timeLimitPreLoad()
                 loadForecast()
             }
         }
+    }
+
+    // Ограничение времени отображения Splash Screen
+    private fun timeLimitPreLoad() = viewModelScope.launch {
+        delay(500)
+        _displayed.value = true
     }
 
     fun onEvent(mainScreenEvent: MainScreenEvent) {
