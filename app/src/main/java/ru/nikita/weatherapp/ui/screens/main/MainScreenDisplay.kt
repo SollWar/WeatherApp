@@ -9,6 +9,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,13 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.fade
-import com.google.accompanist.placeholder.material.placeholder
 import ru.nikita.weatherapp.R
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreenState
 import ru.nikita.weatherapp.ui.theme.*
@@ -31,25 +31,32 @@ import ru.z3rg.domain.models.ForecastWeatherDay
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Preview(device = "spec:width=360dp,height=800dp,dpi=440", showSystemUi = true, backgroundColor = 0xFF1A1C1E,
-    showBackground = true
-)
+@Preview(device = "spec:width=360dp,height=800dp,dpi=440", showSystemUi = true)
 @Composable
 fun MainScreenDisplayPreview() {
-    MainScreenDisplay(state = MainScreenState.Display(
-        currentDate = "11 ноября, понедельник",
-        forecast = ForecastWeather(
-            cityName = "Балашиха",
-            forecastDay = arrayListOf(
-                ForecastWeatherDay(),
-                ForecastWeatherDay(),
-                ForecastWeatherDay(),
-                ForecastWeatherDay(),
-                ForecastWeatherDay()
-            ),
-            forecastCurrent = ForecastWeatherDay()
-        )
-    ))
+    MaterialTheme(
+        colorScheme = DarkColors
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            MainScreenDisplay(state = MainScreenState.Display(
+                currentDate = "11 ноября, понедельник",
+                forecast = ForecastWeather(
+                    cityName = "Балашиха",
+                    forecastDay = arrayListOf(
+                        ForecastWeatherDay(),
+                        ForecastWeatherDay(),
+                        ForecastWeatherDay(),
+                        ForecastWeatherDay(),
+                        ForecastWeatherDay()
+                    ),
+                    forecastCurrent = ForecastWeatherDay()
+                )
+            ))
+        }
+    }
 }
 
 @Composable
@@ -78,11 +85,15 @@ fun MainScreenDisplay(
                 Column {
                     Text(
                         text = state.forecast.cityName,
-                        style = juraFont24sp()
+                        style = juraFont24sp(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     )
                     Text(
                         text = state.currentDate,
-                        style = juraFont20spGray()
+                        style = juraFont20sp(
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     )
                 }
                 Box(
@@ -90,7 +101,7 @@ fun MainScreenDisplay(
                         .height(40.dp)
                         .width(40.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(DarkForeground)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .clickable {
                             onSearchClick()
                         },
@@ -99,7 +110,7 @@ fun MainScreenDisplay(
                     Icon(
                         Icons.Default.Search,
                         contentDescription = "Поиск города",
-                        tint = White
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -110,16 +121,7 @@ fun MainScreenDisplay(
                 .fillMaxWidth()
         ) {
             Column {
-                Column(
-                    modifier = Modifier
-                        .placeholder(
-                            visible =  state.loading,
-                            color = PlaceholderFadeInColor,
-                            highlight = PlaceholderHighlight.fade(
-                                highlightColor = PlaceholderFadeOutColor
-                            )
-                        )
-                ) {
+                Column {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -129,7 +131,9 @@ fun MainScreenDisplay(
                         Text(
                             text =
                             state.forecast.forecastCurrent.avgTempC.toInt().toString() + "°",
-                            style = juraFont64sp()
+                            style = juraFont64sp(
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         )
                         Icon(
                             rememberAsyncImagePainter(
@@ -139,12 +143,14 @@ fun MainScreenDisplay(
                             Modifier
                                 .width(64.dp)
                                 .height(64.dp),
-                            tint = White
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     Text(
                         text = state.forecast.forecastCurrent.conditionText,
-                        style = juraFont20spGray()
+                        style = juraFont20sp(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     )
                     Row(
                         modifier = Modifier
@@ -152,22 +158,23 @@ fun MainScreenDisplay(
                             .fillMaxWidth()
                             .height(72.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(DarkForeground),
+                            .background(MaterialTheme.colorScheme.primaryContainer),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         WeatherIndicators(
-                            "Ветер",
-                            (state.forecast.forecastCurrent.maxWindKph / 3.6).toInt().toString() + " м/с",
+                            stringResource(R.string.wind),
+                            (state.forecast.forecastCurrent.maxWindKph / 3.6).toInt().toString()
+                                    + " " + stringResource(R.string.wind_speed),
                             R.drawable.wind
                         )
                         WeatherIndicators(
-                            "Влажность",
+                            stringResource(R.string.humidity),
                             state.forecast.forecastCurrent.avgHumidity.toInt().toString() + " %",
                             R.drawable.humidity
                         )
                         WeatherIndicators(
-                            "Дождь",
+                            stringResource(R.string.rain),
                             state.forecast.forecastDay[0].chanceRain.toInt().toString() + " %",
                             R.drawable.rain
                         )
@@ -175,8 +182,7 @@ fun MainScreenDisplay(
                 }
                 for (i in 1..4) {
                     WeatherDay(
-                        state.forecast.forecastDay[i],
-                        state.loading
+                        state.forecast.forecastDay[i]
                     )
                 }
             }
@@ -207,23 +213,26 @@ fun WeatherIndicators(
             Modifier
                 .width(24.dp)
                 .height(24.dp),
-            tint = White
+            tint = MaterialTheme.colorScheme.primary
         )
         Text(
             text = value,
-            style = juraFont16sp()
+            style = juraFont16sp(
+                color = MaterialTheme.colorScheme.primary
+            )
         )
         Text(
             text = text,
-            style = juraFont12spGray()
+            style = juraFont12sp(
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         )
     }
 }
 
 @Composable
 fun WeatherDay(
-    forecastDay: ForecastWeatherDay,
-    loading: Boolean
+    forecastDay: ForecastWeatherDay
 ) {
 
     @Composable
@@ -238,11 +247,16 @@ fun WeatherDay(
         ) {
             Text(
                 text = text,
-                style = juraFont16spGray(),
+                style = juraFont16sp(
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
             )
             Text(
                 text = value,
-                style = juraFont16sp(TextAlign.End)
+                style = juraFont16sp(
+                    textAlign =  TextAlign.End,
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
         }
     }
@@ -262,18 +276,13 @@ fun WeatherDay(
         ) {
             Text(
                 text = formatter.format(date!!),
-                style = juraFont16sp()
+                style = juraFont16sp(
+                    color = MaterialTheme.colorScheme.primary
+                )
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .placeholder(
-                        visible = loading,
-                        color = PlaceholderFadeInColor,
-                        highlight = PlaceholderHighlight.fade(
-                            highlightColor = PlaceholderFadeOutColor
-                        )
-                    )
             ) {
                 Column(
                     Modifier
@@ -281,20 +290,21 @@ fun WeatherDay(
                         .weight(1f)
                 ) {
                     Indicator(
-                        "Температура",
+                        stringResource(R.string.temperature),
                         forecastDay.minTempC.toInt().toString() + "°" + " - "
                                 + forecastDay.maxTempC.toInt().toString() + "°"
                     )
                     Indicator(
-                        "Ветер",
-                        (forecastDay.maxWindKph / 3.6).toInt().toString() + " м/с"
+                        stringResource(R.string.wind),
+                        (forecastDay.maxWindKph / 3.6).toInt().toString()
+                                + " " + stringResource(R.string.wind_speed)
                     )
                     Indicator(
-                        "Влажность",
+                        stringResource(R.string.humidity),
                         forecastDay.avgHumidity.toInt().toString() + " %"
                     )
                     Indicator(
-                        "Дождь",
+                        stringResource(R.string.rain),
                         forecastDay.chanceRain.toInt().toString() + " %"
                     )
                 }
@@ -307,14 +317,17 @@ fun WeatherDay(
                         .width(48.dp)
                         .height(48.dp)
                         .weight(0.2f),
-                    tint = White
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = forecastDay.conditionText,
-                style = juraFont16spGray(TextAlign.End)
+                style = juraFont16sp(
+                    textAlign =  TextAlign.End,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     }

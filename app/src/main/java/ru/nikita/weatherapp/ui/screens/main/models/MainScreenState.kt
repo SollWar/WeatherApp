@@ -5,9 +5,7 @@ import ru.z3rg.domain.models.ForecastWeather
 sealed class MainScreenState {
     data class Display(
         var forecast: ForecastWeather = ForecastWeather(),
-        var currentDate: String = "",
-        var loading: Boolean = true,
-        var error: Boolean = false
+        var currentDate: String = ""
     ): MainScreenState()
     data object Error: MainScreenState()
     data object Loading: MainScreenState()

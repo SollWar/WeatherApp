@@ -20,14 +20,14 @@ import ru.nikita.weatherapp.ui.screens.main.models.MainScreenState
 import ru.nikita.weatherapp.ui.screens.main.viewmodel.MainScreenViewModel
 import ru.nikita.weatherapp.ui.screens.search.SearchScreen
 import ru.nikita.weatherapp.ui.screens.search.viewmodel.SearchScreenViewModel
-import ru.nikita.weatherapp.ui.theme.WeatherAppTheme
+import ru.nikita.weatherapp.ui.theme.AppTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WeatherAppTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

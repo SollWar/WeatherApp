@@ -67,6 +67,8 @@ class MainScreenViewModel @Inject constructor(
 
     private fun loadForecast() {
         viewModelScope.launch {
+            _state.value = MainScreenState.Loading
+
             val responseCityName = viewModelScope.async(Dispatchers.IO) {
                 return@async getCityNameFromDataStoreUseCase.invoke()
             }
@@ -85,8 +87,7 @@ class MainScreenViewModel @Inject constructor(
                         cityName = responseCityName.await(),
                         cityCord = responseCityCord.await()
                     ),
-                    currentDate = currentDate,
-                    loading = false
+                    currentDate = currentDate
                 )
             } else {
                 _state.value = MainScreenState.Error

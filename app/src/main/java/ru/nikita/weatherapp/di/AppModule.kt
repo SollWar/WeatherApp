@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.nikita.weatherapp.R
 import ru.z3rg.data.local.datastore.userDataStore
 import ru.z3rg.data.local.repository.UserDataStoreRepositoryImpl
 import ru.z3rg.data.remote.repository.WeatherRepositoryImpl
@@ -34,6 +35,11 @@ object AppModule {
     fun provideWeatherApi(): WeatherApi {
         return provideRetrofit()
             .create(WeatherApi::class.java)
+    }
+
+    @Provides
+    fun provideCurrentLocale(@ApplicationContext applicationContext: Context): String {
+        return applicationContext.resources.getString(R.string.current_locale)
     }
 
     @Provides

@@ -1,6 +1,5 @@
 package ru.nikita.weatherapp.ui.theme
 
-import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -10,7 +9,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import ru.nikita.weatherapp.R
 
-// Set of Material typography styles to start with
+/*
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -19,7 +18,7 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     )
-    /* Other default text styles to override
+     Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -34,8 +33,8 @@ val Typography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     )
-    */
 )
+*/
 
 val Jura = FontFamily(
     Font(R.font.jura_light, FontWeight.Light),
@@ -45,9 +44,20 @@ val Jura = FontFamily(
     Font(R.font.jura_semibold, FontWeight.SemiBold)
 )
 
+fun juraFont12sp(
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color
+): TextStyle = TextStyle(
+    fontSize = 12.sp,
+    fontFamily = Jura,
+    fontWeight = FontWeight.Light,
+    color = color,
+    textAlign = textAlign
+)
+
 fun juraFont16sp(
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = White
+    color: Color
 ): TextStyle = TextStyle(
     fontSize = 16.sp,
     fontFamily = Jura,
@@ -58,7 +68,7 @@ fun juraFont16sp(
 
 fun juraFont24sp(
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = White
+    color: Color
 ): TextStyle = TextStyle(
     fontSize = 24.sp,
     fontFamily = Jura,
@@ -67,46 +77,24 @@ fun juraFont24sp(
     textAlign = textAlign
 )
 
-fun juraFont64sp(
+fun juraFont20sp(
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = White
+    color: Color
 ): TextStyle = TextStyle(
-    fontSize = 64.sp,
+    fontSize = 20.sp,
     fontFamily = Jura,
     fontWeight = FontWeight.Bold,
     color = color,
     textAlign = textAlign
 )
 
-fun juraFont20spGray(
+fun juraFont64sp(
     textAlign: TextAlign = TextAlign.Start,
-    color: Color = TextGray
+    color: Color
 ): TextStyle = TextStyle(
-    fontSize = 20.sp,
+    fontSize = 64.sp,
     fontFamily = Jura,
-    fontWeight = FontWeight.Light,
-    color = color,
-    textAlign = textAlign
-)
-
-fun juraFont16spGray(
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = TextGray
-): TextStyle = TextStyle(
-    fontSize = 16.sp,
-    fontFamily = Jura,
-    fontWeight = FontWeight.Light,
-    color = color,
-    textAlign = textAlign
-)
-
-fun juraFont12spGray(
-    textAlign: TextAlign = TextAlign.Start,
-    color: Color = TextGray
-): TextStyle = TextStyle(
-    fontSize = 12.sp,
-    fontFamily = Jura,
-    fontWeight = FontWeight.Light,
+    fontWeight = FontWeight.Bold,
     color = color,
     textAlign = textAlign
 )

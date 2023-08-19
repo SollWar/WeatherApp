@@ -13,9 +13,12 @@ class WeatherRepositoryImpl @Inject constructor (
     private val weatherApi: WeatherApi
 ): WeatherRepository {
 
-    override suspend fun getForecast(cityName: String): ForecastWeather {
+    override suspend fun getForecast(cityName: String, lang: String): ForecastWeather {
         return try {
-            val request = weatherApi.getWeather(city = cityName)
+            val request = weatherApi.getWeather(
+                city = cityName,
+                lang = lang
+            )
             weatherApiResponseToForecastWeather(request.body()!!)
         } catch (e: Exception) {
             ForecastWeather(

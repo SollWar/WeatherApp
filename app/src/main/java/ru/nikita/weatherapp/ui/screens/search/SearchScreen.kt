@@ -8,21 +8,21 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.nikita.weatherapp.R
 import ru.nikita.weatherapp.ui.screens.search.models.SearchScreenEvent
 import ru.nikita.weatherapp.ui.screens.search.models.SearchScreenState
-import ru.nikita.weatherapp.ui.theme.White
-import ru.nikita.weatherapp.ui.theme.juraFont16spGray
+import ru.nikita.weatherapp.ui.theme.DarkColors
+import ru.nikita.weatherapp.ui.theme.juraFont16sp
 import ru.nikita.weatherapp.ui.theme.juraFont24sp
 import ru.z3rg.domain.models.CityEntity
 import ru.z3rg.domain.models.CityList
@@ -30,35 +30,45 @@ import ru.z3rg.domain.models.CityList
 @Preview
 @Composable
 fun SearchScreenPreview() {
-    SearchScreen(
-        SearchScreenState(
-            cityList = CityList(
-                arrayListOf(
-                    CityEntity(
-                        name = "Город 1",
-                        region = "Регион 1 регион",
-                        country = "Страна 1 страна",
-                        lat = 0.0,
-                        lon = 0.0
-                    ),
-                    CityEntity(
-                        name = "Город 2",
-                        region = "Регион 2 регион",
-                        country = "Страна 2 страна",
-                        lat = 0.0,
-                        lon = 0.0
-                    ),
-                    CityEntity(
-                        name = "Город 3",
-                        region = "Регион 3 регион",
-                        country = "Страна 3 страна",
-                        lat = 0.0,
-                        lon = 0.0
+    MaterialTheme(
+        colorScheme = DarkColors
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            SearchScreen(
+                SearchScreenState(
+                    cityList = CityList(
+                        arrayListOf(
+                            CityEntity(
+                                name = "Город 1",
+                                region = "Регион 1 регион",
+                                country = "Страна 1 страна",
+                                lat = 0.0,
+                                lon = 0.0
+                            ),
+                            CityEntity(
+                                name = "Город 2",
+                                region = "Регион 2 регион",
+                                country = "Страна 2 страна",
+                                lat = 0.0,
+                                lon = 0.0
+                            ),
+                            CityEntity(
+                                name = "Город 3",
+                                region = "Регион 3 регион",
+                                country = "Страна 3 страна",
+                                lat = 0.0,
+                                lon = 0.0
+                            )
+                        )
                     )
                 )
             )
-        )
-    )
+        }
+    }
+
 }
 
 
@@ -86,26 +96,35 @@ fun SearchScreen(
                 onValueChange = {
                     onEvent(SearchScreenEvent.UpdateTextField(it))
                 },
-                textStyle = juraFont24sp(),
+                textStyle = juraFont24sp(
+                    color = MaterialTheme.colorScheme.primary
+                ),
                 trailingIcon = {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = "Поиск города",
-                        tint = White
+                        modifier = Modifier
+                            .clickable {
+                                onEvent(SearchScreenEvent.UpdateCityList)
+                            },
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 label = {
                     Text(
-                        text = "Название города",
-                        style = juraFont16spGray()
+                        text = stringResource(R.string.city_name_label),
+                        style = juraFont16sp(
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     )
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
-                    autoCorrect = true
+                    autoCorrect = true,
+                    imeAction = ImeAction.Search
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {
+                    onSearch = {
                         onEvent(SearchScreenEvent.UpdateCityList)
                     }
                 )
@@ -127,8 +146,11 @@ fun SearchScreen(
                 Text(
                     modifier = Modifier
                         .padding(bottom = 8.dp, start = 32.dp, end = 32.dp),
-                    text = "Не удалось загрузить результаты поиска",
-                    style = juraFont16spGray(textAlign = TextAlign.Center)
+                    text = stringResource(R.string.error_search),
+                    style = juraFont16sp(
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 )
             } else {
                 Box(
@@ -173,15 +195,21 @@ fun CityItem(
     ) {
         Text(
             text = cityEntity.name,
-            style = juraFont24sp()
+            style = juraFont24sp(
+                color = MaterialTheme.colorScheme.primary
+            )
         )
         Text(
             text = cityEntity.region,
-            style = juraFont16spGray()
+            style = juraFont16sp(
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         )
         Text(
             text = cityEntity.country,
-            style = juraFont16spGray()
+            style = juraFont16sp(
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         )
     }
 
