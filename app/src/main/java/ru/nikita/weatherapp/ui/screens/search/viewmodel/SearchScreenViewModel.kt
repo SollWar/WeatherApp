@@ -50,13 +50,28 @@ class SearchScreenViewModel @Inject constructor(
 
     private fun updateCityList() {
         viewModelScope.launch {
+            _state.value = _state.value.copy(
+                loading = true,
+                error = false
+            )
+
             val responseCityList= viewModelScope.async(Dispatchers.IO) {
                 return@async findCityByCityNameUseCase.invoke(_state.value.textFieldValue)
             }
 
-            _state.value = _state.value.copy(
-                cityList = responseCityList.await()
-            )
+            if (responseCityList.await().error == null) {
+                _state.value = _state.value.copy(
+                    cityList = responseCityList.await(),
+                    error = false,
+                    loading = false
+                )
+            } else {
+                _state.value = _state.value.copy(
+                    error = true,
+                    loading = false
+                )
+            }
+
         }
     }
 

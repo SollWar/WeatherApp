@@ -1,20 +1,12 @@
 package ru.nikita.weatherapp.ui.screens.main.models
 
 import ru.z3rg.domain.models.ForecastWeather
-import ru.z3rg.domain.models.ForecastWeatherDay
 
-data class MainScreenState(
-    var forecast: ForecastWeather = ForecastWeather(
-        forecastDay = arrayListOf(
-            ForecastWeatherDay(),
-            ForecastWeatherDay(),
-            ForecastWeatherDay(),
-            ForecastWeatherDay(),
-            ForecastWeatherDay()
-        ),
-        forecastCurrent = ForecastWeatherDay()
-    ),
-    var currentDate: String = "",
-    var loading: Boolean = false,
-    var error: Boolean = false
-)
+sealed class MainScreenState {
+    data class Display(
+        var forecast: ForecastWeather = ForecastWeather(),
+        var currentDate: String = ""
+    ): MainScreenState()
+    data object Error: MainScreenState()
+    data object Loading: MainScreenState()
+}

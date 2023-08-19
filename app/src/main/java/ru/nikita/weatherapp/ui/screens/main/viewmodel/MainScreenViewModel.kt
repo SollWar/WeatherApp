@@ -1,11 +1,11 @@
 package ru.nikita.weatherapp.ui.screens.main.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,36 +25,65 @@ class MainScreenViewModel @Inject constructor(
     private val getCordForDataStoreUseCase: GetCordForDataStoreUseCase
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(MainScreenState())
+    private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(MainScreenState.Loading)
     val state = _state.asStateFlow()
+
+    private val _displayed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val displayed = _displayed.asStateFlow()
+
     private val _currentDate = Calendar.getInstance().time
     private val formatter = SimpleDateFormat("dd MMMM, EEEE", Locale.getDefault())
     private val currentDate = formatter.format(_currentDate)
 
-    fun onEvent(mainScreenEvent: MainScreenEvent) {
-        when (mainScreenEvent) {
-            is MainScreenEvent.ReloadForecast -> {
-                reloadForecast()
+    fun onState(mainScreenState: MainScreenState) {
+        when (mainScreenState) {
+            is MainScreenState.Display -> {
+                _displayed.value = true
+                isCityChange()
+            }
+            is MainScreenState.Error -> {
+            }
+            is MainScreenState.Loading -> {
+                timeLimitPreLoad()
+                loadForecast()
             }
         }
     }
 
-    init {
-        loadForecast()
+    // Ограничение времени отображения Splash Screen
+    private fun timeLimitPreLoad() = viewModelScope.launch {
+        delay(600)
+        _displayed.value = true
+    }
+
+    fun onEvent(mainScreenEvent: MainScreenEvent) {
+        when (mainScreenEvent) {
+            is MainScreenEvent.ReloadForecast -> {
+                loadForecast()
+            }
+        }
+    }
+    
+    private fun isCityChange() {
+        viewModelScope.launch {
+            val responseDataStore = viewModelScope.async(Dispatchers.IO) {
+                return@async getCordForDataStoreUseCase.invoke()
+            }
+
+            if ((_state.value as MainScreenState.Display).forecast.cityCord != responseDataStore.await()) {
+                _state.value = MainScreenState.Loading
+                loadForecast()
+            }
+        }
     }
 
     private fun loadForecast() {
-        _state.value = _state.value.copy(
-            currentDate = currentDate
-        )
-        _state.value = _state.value.copy(
-            loading = true
-        )
         viewModelScope.launch {
+
             val responseCityName = viewModelScope.async(Dispatchers.IO) {
                 return@async getCityNameFromDataStoreUseCase.invoke()
             }
-
+            
             val responseCityCord = viewModelScope.async(Dispatchers.IO) {
                 return@async getCordForDataStoreUseCase.invoke()
             }
@@ -62,34 +91,19 @@ class MainScreenViewModel @Inject constructor(
             val responseForecast = viewModelScope.async(Dispatchers.IO) {
                 return@async getForecastForCityNameUseCase.invoke(responseCityCord.await())
             }
-
-            _state.value = _state.value.copy(
-                forecast = responseForecast.await()
-            )
-            _state.value = _state.value.copy(
-                forecast = _state.value.forecast.copy(
-                    cityCord = responseCityCord.await(),
-                    cityName = responseCityName.await()
+            
+            if (responseForecast.await().error == null) {
+                _state.value = MainScreenState.Display(
+                    forecast = responseForecast.await().copy(
+                        cityName = responseCityName.await(),
+                        cityCord = responseCityCord.await()
+                    ),
+                    currentDate = currentDate
                 )
-            )
-
-            _state.value = _state.value.copy(
-                loading = false
-            )
-            Log.d("ForecastCurrent", _state.value.forecast.forecastCurrent.toString())
-        }
-    }
-
-    private fun reloadForecast() {
-        viewModelScope.launch {
-            val responseDataStore = viewModelScope.async(Dispatchers.IO) {
-                return@async getCordForDataStoreUseCase.invoke()
+            } else {
+                _state.value = MainScreenState.Error
             }
 
-            if (_state.value.forecast.cityCord != responseDataStore.await()) {
-                loadForecast()
-            }
         }
     }
-
 }

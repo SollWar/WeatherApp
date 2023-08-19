@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Погода</string>
+    <string name="error_search">Не удалось загрузить результаты поиска</string>
+    <string name="error_forecast">Не удалось загрузить прогноз погоды</string>
+    <string name="rain">Дождь</string>
+    <string name="humidity">Влажность</string>
+    <string name="wind">Ветер</string>
+    <string name="temperature">Температура</string>
+    <string name="wind_speed">м/с</string>
+    <string name="current_locale">ru</string>
+    <string name="city_name_label">Название города</string>
+</resources>

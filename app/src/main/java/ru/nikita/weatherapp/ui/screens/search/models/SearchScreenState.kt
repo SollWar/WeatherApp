@@ -4,5 +4,7 @@ import ru.z3rg.domain.models.CityList
 
 data class SearchScreenState(
     var cityList: CityList = CityList(),
-    var textFieldValue: String = ""
+    var textFieldValue: String = "",
+    var error: Boolean = false,
+    var loading: Boolean = false
 )

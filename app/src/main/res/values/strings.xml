@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Weather App</string>
+    <string name="error_search">Failed to load search results</string>
+    <string name="error_forecast">Failed to load weather forecast</string>
+    <string name="rain">Rain</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="temperature">Temperature</string>
+    <string name="wind_speed">m/s</string>
+    <string name="current_locale">en</string>
+    <string name="city_name_label">City name</string>
 </resources>

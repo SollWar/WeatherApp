@@ -5,11 +5,12 @@ import ru.z3rg.domain.repository.WeatherRepository
 import javax.inject.Inject
 
 class GetForecastForCityNameUseCase @Inject constructor(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val currentLocale: String
 ) {
 
     suspend fun invoke(cityName: String): ForecastWeather {
-        return weatherRepository.getForecast(cityName)
+        return weatherRepository.getForecast(cityName, currentLocale)
     }
 
 }
