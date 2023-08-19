@@ -52,7 +52,7 @@ class MainScreenViewModel @Inject constructor(
 
     // Ограничение времени отображения Splash Screen
     private fun timeLimitPreLoad() = viewModelScope.launch {
-        delay(500)
+        delay(600)
         _displayed.value = true
     }
 
