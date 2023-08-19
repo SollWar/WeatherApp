@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +27,7 @@ import ru.nikita.weatherapp.ui.theme.AppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AppTheme {
                 // A surface container using the 'background' color from the theme
@@ -33,41 +35,46 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val mainScreenViewModel = hiltViewModel<MainScreenViewModel>()
+
+                    // Пред загрузка прогноза во время Splash экрана
+                    installSplashScreen().apply {
+                        setKeepOnScreenCondition {
+                            !mainScreenViewModel.displayed.value
+                        }
+                    }
+
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "main") {
                         composable(route = "main") {
-
-                            val viewModel = hiltViewModel<MainScreenViewModel>()
-                            val state = viewModel.state.collectAsState()
-                            when (state.value) {
-                                is MainScreenState.Loading -> {
-                                    MainScreenLoading(
-                                        onState = viewModel::onState
-                                    )
-                                }
-
-                                is MainScreenState.Error -> {
-                                    MainScreenError(
-                                        onState = viewModel::onState,
-                                        onReloadClick = viewModel::onEvent
-                                    )
-                                }
-
+                            val mainScreenState = mainScreenViewModel.state.collectAsState()
+                            when (mainScreenState.value) {
                                 is MainScreenState.Display -> {
                                     MainScreenDisplay(
-                                        onState = viewModel::onState,
-                                        onSearchClick =  { navController.navigate(route = "search") },
-                                        state = state.value as MainScreenState.Display
+                                        onState = mainScreenViewModel::onState,
+                                        onSearchClick = { navController.navigate(route = "search") },
+                                        state = mainScreenState.value as MainScreenState.Display
+                                    )
+                                }
+                                is MainScreenState.Error -> {
+                                    MainScreenError(
+                                        onState = mainScreenViewModel::onState,
+                                        onReloadClick = mainScreenViewModel::onEvent
+                                    )
+                                }
+                                is MainScreenState.Loading -> {
+                                    MainScreenLoading(
+                                        onState = mainScreenViewModel::onState
                                     )
                                 }
                             }
                         }
                         composable(route = "search") {
-                            val viewModel = hiltViewModel<SearchScreenViewModel>()
-                            val state = viewModel.state.collectAsState()
+                            val searchScreenViewModel = hiltViewModel<SearchScreenViewModel>()
+                            val state = searchScreenViewModel.state.collectAsState()
                             SearchScreen(
                                 state = state.value,
-                                onEvent = viewModel::onEvent
+                                onEvent = searchScreenViewModel::onEvent
                             ) { navController.popBackStack() }
                         }
                     }

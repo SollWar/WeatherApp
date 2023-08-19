@@ -26,6 +26,10 @@ class MainScreenViewModel @Inject constructor(
 
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(MainScreenState.Loading)
     val state = _state.asStateFlow()
+
+    private val _displayed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val displayed = _displayed.asStateFlow()
+
     private val _currentDate = Calendar.getInstance().time
     private val formatter = SimpleDateFormat("dd MMMM, EEEE", Locale.getDefault())
     private val currentDate = formatter.format(_currentDate)
@@ -33,6 +37,7 @@ class MainScreenViewModel @Inject constructor(
     fun onState(mainScreenState: MainScreenState) {
         when (mainScreenState) {
             is MainScreenState.Display -> {
+                _displayed.value = true
                 isCityChange()
             }
             is MainScreenState.Error -> {
@@ -47,7 +52,6 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(mainScreenEvent: MainScreenEvent) {
         when (mainScreenEvent) {
             is MainScreenEvent.ReloadForecast -> {
-                _state.value = MainScreenState.Loading
                 loadForecast()
             }
         }
@@ -60,6 +64,7 @@ class MainScreenViewModel @Inject constructor(
             }
 
             if ((_state.value as MainScreenState.Display).forecast.cityCord != responseDataStore.await()) {
+                _state.value = MainScreenState.Loading
                 loadForecast()
             }
         }
@@ -67,7 +72,6 @@ class MainScreenViewModel @Inject constructor(
 
     private fun loadForecast() {
         viewModelScope.launch {
-            _state.value = MainScreenState.Loading
 
             val responseCityName = viewModelScope.async(Dispatchers.IO) {
                 return@async getCityNameFromDataStoreUseCase.invoke()
