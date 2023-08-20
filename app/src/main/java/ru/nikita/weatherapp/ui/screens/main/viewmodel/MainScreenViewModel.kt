@@ -59,6 +59,7 @@ class MainScreenViewModel @Inject constructor(
     fun onEvent(mainScreenEvent: MainScreenEvent) {
         when (mainScreenEvent) {
             is MainScreenEvent.ReloadForecast -> {
+                _state.value = MainScreenState.Loading
                 loadForecast()
             }
         }
@@ -92,9 +93,9 @@ class MainScreenViewModel @Inject constructor(
                 return@async getForecastForCityNameUseCase.invoke(responseCityCord.await())
             }
             
-            if (responseForecast.await().error == null) {
+            if (responseForecast.await().body != null) {
                 _state.value = MainScreenState.Display(
-                    forecast = responseForecast.await().copy(
+                    forecast = responseForecast.await().body!!.copy(
                         cityName = responseCityName.await(),
                         cityCord = responseCityCord.await()
                     ),
