@@ -10,4 +10,5 @@
     <string name="wind_speed">м/с</string>
     <string name="current_locale">ru</string>
     <string name="city_name_label">Название города</string>
+    <string name="repeat">Повторить</string>
 </resources>

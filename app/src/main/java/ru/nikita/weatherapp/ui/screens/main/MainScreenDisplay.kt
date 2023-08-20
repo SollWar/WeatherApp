@@ -1,11 +1,8 @@
 package ru.nikita.weatherapp.ui.screens.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -72,7 +69,7 @@ fun MainScreenDisplay(
     ) {
         Box(
             modifier = Modifier
-                .padding(vertical = 16.dp, horizontal = 16.dp)
+                .padding(16.dp)
                 .fillMaxWidth()
                 .height(60.dp)
         ) {
@@ -135,15 +132,14 @@ fun MainScreenDisplay(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         )
-                        Icon(
+                        Image(
                             rememberAsyncImagePainter(
                                 model = "https:" + state.forecast.forecastDay[0].conditionIcon
                             ),
                             "Погода",
                             Modifier
                                 .width(64.dp)
-                                .height(64.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                                .height(64.dp)
                         )
                     }
                     Text(
@@ -224,7 +220,7 @@ fun WeatherIndicators(
         Text(
             text = text,
             style = juraFont12sp(
-                color = MaterialTheme.colorScheme.onPrimary
+                color = MaterialTheme.colorScheme.primary
             )
         )
     }
@@ -263,7 +259,6 @@ fun WeatherDay(
 
     val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(forecastDay.date)
     val formatter = SimpleDateFormat("dd MMMM, EEEE", Locale.getDefault())
-
 
     Box(
         modifier = Modifier
@@ -308,7 +303,7 @@ fun WeatherDay(
                         forecastDay.chanceRain.toInt().toString() + " %"
                     )
                 }
-                Icon(
+                Image(
                     rememberAsyncImagePainter(
                         model = "https:" + forecastDay.conditionIcon
                     ),
@@ -316,8 +311,7 @@ fun WeatherDay(
                     Modifier
                         .width(48.dp)
                         .height(48.dp)
-                        .weight(0.2f),
-                    tint = MaterialTheme.colorScheme.primary
+                        .weight(0.2f)
                 )
             }
             Text(

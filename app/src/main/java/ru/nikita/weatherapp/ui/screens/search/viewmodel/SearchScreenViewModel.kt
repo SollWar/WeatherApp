@@ -59,9 +59,9 @@ class SearchScreenViewModel @Inject constructor(
                 return@async findCityByCityNameUseCase.invoke(_state.value.textFieldValue)
             }
 
-            if (responseCityList.await().error == null) {
+            if (responseCityList.await().body != null) {
                 _state.value = _state.value.copy(
-                    cityList = responseCityList.await(),
+                    cityList = responseCityList.await().body!!,
                     error = false,
                     loading = false
                 )

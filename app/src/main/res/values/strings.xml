@@ -9,4 +9,5 @@
     <string name="wind_speed">m/s</string>
     <string name="current_locale">en</string>
     <string name="city_name_label">City name</string>
+    <string name="repeat">Repeat</string>
 </resources>

@@ -35,21 +35,24 @@ fun AppTheme(
 ) {
     var colors: ColorScheme = LightColors
     val view = LocalView.current
-    val window = (view.context as Activity).window
+    val activity = (view.context as Activity)
     if (!view.isInEditMode) {
+        // Убрать экшен бар в API 34
+        activity.actionBar?.hide()
+
         if (!useDarkTheme) {
             colors = LightColors
             SideEffect {
-                window.statusBarColor = LightColors.background.toArgb()
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+                activity.window.statusBarColor = LightColors.background.toArgb()
+                WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = true
             }
         } else {
             colors = DarkColors
             SideEffect {
                 // Статус бар в цвет фона
-                window.statusBarColor = colors.background.toArgb()
+                activity.window.statusBarColor = colors.background.toArgb()
                 // Белые символы в статус баре в темной теме
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+                WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = false
             }
         }
 
