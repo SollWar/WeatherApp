@@ -39,15 +39,19 @@ class MainScreenViewModel @Inject constructor(
         when (mainScreenState) {
             is MainScreenState.Display -> {
                 _displayed.value = true
-                isCityChange()
             }
+
             is MainScreenState.Error -> {
             }
+
             is MainScreenState.Loading -> {
-                timeLimitPreLoad()
                 loadForecast()
             }
         }
+    }
+
+    init {
+        timeLimitPreLoad()
     }
 
     // Ограничение времени отображения Splash Screen
@@ -64,19 +68,6 @@ class MainScreenViewModel @Inject constructor(
             }
         }
     }
-    
-    private fun isCityChange() {
-        viewModelScope.launch {
-            val responseDataStore = viewModelScope.async(Dispatchers.IO) {
-                return@async getCordForDataStoreUseCase.invoke()
-            }
-
-            if ((_state.value as MainScreenState.Display).forecast.cityCord != responseDataStore.await()) {
-                _state.value = MainScreenState.Loading
-                loadForecast()
-            }
-        }
-    }
 
     private fun loadForecast() {
         viewModelScope.launch {
@@ -84,7 +75,7 @@ class MainScreenViewModel @Inject constructor(
             val responseCityName = viewModelScope.async(Dispatchers.IO) {
                 return@async getCityNameFromDataStoreUseCase.invoke()
             }
-            
+
             val responseCityCord = viewModelScope.async(Dispatchers.IO) {
                 return@async getCordForDataStoreUseCase.invoke()
             }
@@ -92,7 +83,7 @@ class MainScreenViewModel @Inject constructor(
             val responseForecast = viewModelScope.async(Dispatchers.IO) {
                 return@async getForecastForCityNameUseCase.invoke(responseCityCord.await())
             }
-            
+
             if (responseForecast.await().body != null) {
                 _state.value = MainScreenState.Display(
                     forecast = responseForecast.await().body!!.copy(
