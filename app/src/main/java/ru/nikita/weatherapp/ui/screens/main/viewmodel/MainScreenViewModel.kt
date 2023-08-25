@@ -3,12 +3,9 @@ package ru.nikita.weatherapp.ui.screens.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreenEvent
 import ru.nikita.weatherapp.ui.screens.main.models.MainScreenState
 import ru.z3rg.domain.usecases.GetCordForDataStoreUseCase
@@ -70,32 +67,28 @@ class MainScreenViewModel @Inject constructor(
     }
 
     private fun loadForecast() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val cityName = getCityNameFromDataStoreUseCase.invoke()
+            val cityCord = getCordForDataStoreUseCase.invoke()
+            val forecast = getForecastForCityNameUseCase.invoke(cityCord)
 
-            val responseCityName = viewModelScope.async(Dispatchers.IO) {
-                return@async getCityNameFromDataStoreUseCase.invoke()
-            }
-
-            val responseCityCord = viewModelScope.async(Dispatchers.IO) {
-                return@async getCordForDataStoreUseCase.invoke()
-            }
-
-            val responseForecast = viewModelScope.async(Dispatchers.IO) {
-                return@async getForecastForCityNameUseCase.invoke(responseCityCord.await())
-            }
-
-            if (responseForecast.await().body != null) {
-                _state.value = MainScreenState.Display(
-                    forecast = responseForecast.await().body!!.copy(
-                        cityName = responseCityName.await(),
-                        cityCord = responseCityCord.await()
-                    ),
-                    currentDate = currentDate
+            val forecastBody = forecast.body
+            if (forecastBody != null) {
+                val updatedForecast = forecastBody.copy(
+                    cityName = cityName,
+                    cityCord = cityCord
                 )
+                withContext(Dispatchers.Main) {
+                    _state.value = MainScreenState.Display(
+                        forecast = updatedForecast,
+                        currentDate = currentDate
+                    )
+                }
             } else {
-                _state.value = MainScreenState.Error
+                withContext(Dispatchers.Main) {
+                    _state.value = MainScreenState.Error
+                }
             }
-
         }
     }
 }

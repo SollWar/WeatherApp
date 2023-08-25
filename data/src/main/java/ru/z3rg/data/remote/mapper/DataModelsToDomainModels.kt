@@ -1,17 +1,11 @@
 package ru.z3rg.data.remote.mapper
 
-import ru.z3rg.data.remote.models.CitySearch
-import ru.z3rg.data.remote.models.CitySearchItem
-import ru.z3rg.data.remote.models.Forecastday
-import ru.z3rg.data.remote.models.WeatherApiResponse
-import ru.z3rg.domain.models.CityEntity
-import ru.z3rg.domain.models.CityList
-import ru.z3rg.domain.models.ForecastWeather
-import ru.z3rg.domain.models.ForecastWeatherDay
+import ru.z3rg.data.remote.models.*
+import ru.z3rg.domain.models.*
 
 
 fun forecastdayToForecastWeatherDay(forecastday: Forecastday): ForecastWeatherDay {
-    return ForecastWeatherDay(
+    val forecastWeatherDay = ForecastWeatherDay(
         conditionText = forecastday.day.condition.text,
         conditionIcon = forecastday.day.condition.icon,
         avgTempC = forecastday.day.avgtempC,
@@ -22,6 +16,12 @@ fun forecastdayToForecastWeatherDay(forecastday: Forecastday): ForecastWeatherDa
         chanceRain = forecastday.day.dailyChanceOfRain,
         date = forecastday.date
     )
+    forecastday.hour.forEach {
+        forecastWeatherDay.addForecastHour(
+            hourToForecastHours(it)
+        )
+    }
+    return forecastWeatherDay
 }
 
 fun weatherApiResponseToForecastWeather(weatherApiResponse: WeatherApiResponse): ForecastWeather {
@@ -35,11 +35,9 @@ fun weatherApiResponseToForecastWeather(weatherApiResponse: WeatherApiResponse):
             avgHumidity = weatherApiResponse.current.humidity
         )
     )
-    repeat(weatherApiResponse.forecast.forecastday.size) {
+    weatherApiResponse.forecast.forecastday.forEach {
         forecastWeather.addForecastDay(
-            forecastdayToForecastWeatherDay(
-                weatherApiResponse.forecast.forecastday[it]
-            )
+            forecastdayToForecastWeatherDay(it)
         )
     }
     return forecastWeather
@@ -47,9 +45,9 @@ fun weatherApiResponseToForecastWeather(weatherApiResponse: WeatherApiResponse):
 
 fun citySearchToCityList(citySearch: CitySearch): CityList {
     val cityList = CityList()
-    repeat(citySearch.size) {
+    citySearch.forEach {
         cityList.addCityEntity(
-            citySearchItemToCityEntity(citySearch[it])
+            citySearchItemToCityEntity(it)
         )
     }
     return cityList
@@ -62,5 +60,17 @@ fun citySearchItemToCityEntity(citySearchItem: CitySearchItem): CityEntity {
         country = citySearchItem.country,
         lat = citySearchItem.lat,
         lon = citySearchItem.lon
+    )
+}
+
+fun hourToForecastHours(hour: Hour): ForecastHours {
+    return ForecastHours(
+        time = hour.time,
+        tempC = hour.tempC,
+        conditionIcon = hour.condition.icon,
+        conditionText = hour.condition.text,
+        windKhp = hour.windKhp,
+        humidity = hour.humidity,
+        chanceOfRain = hour.chanceOfRain
     )
 }
