@@ -44,6 +44,17 @@ val Jura = FontFamily(
     Font(R.font.jura_semibold, FontWeight.SemiBold)
 )
 
+fun juraFont8sp(
+    textAlign: TextAlign = TextAlign.Start,
+    color: Color
+): TextStyle = TextStyle(
+    fontSize = 8.sp,
+    fontFamily = Jura,
+    fontWeight = FontWeight.Light,
+    color = color,
+    textAlign = textAlign
+)
+
 fun juraFont12sp(
     textAlign: TextAlign = TextAlign.Start,
     color: Color

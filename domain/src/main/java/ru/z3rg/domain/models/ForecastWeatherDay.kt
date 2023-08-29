@@ -9,5 +9,10 @@ data class ForecastWeatherDay(
     val maxWindKph: Double = 0.0,
     val avgHumidity: Double = 0.0,
     val chanceRain: Double = 0.0,
-    val date: String = "2013-11-11"
-)
+    val date: String = "2013-11-11",
+    val forecastHoursList: ArrayList<ForecastHours> = arrayListOf()
+) {
+    fun addForecastHour(forecastHours: ForecastHours) {
+        forecastHoursList.add(forecastHours)
+    }
+}
